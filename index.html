@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>もんすた</title>
+  <link rel="stylesheet" href="./style.css">
+  
+  <link rel="manifest" href="./manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').then((registration) => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, (err) => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="tamagotchi-frame">
+    <!-- プレイヤーのポケモンを表示するキャンバス -->
+    <canvas id="creatureCanvas" width="200" height="200"></canvas>
+
+    <div id="speechBubble" class="speech-bubble">
+          <img id="speechBubbleImage" src="" alt="吹き出し" style="width: 50px; height: 50px;">
+        </div>
+
+
+
+    <!-- ポケモンの名前とレベルを表示 -->
+    <div class="pokemon-info">
+      <p id="pokemonNameDisplay"></p> <!-- ポケモンの名前を表示 -->
+      <p id="pokemonLevel">レベル: 1</p> <!-- レベルも表示 -->
+    </div>
+
+
+
+    <button id="pokedexBtn" onclick="openPokedex()">図鑑</button>
+
+
+    <!-- ステータスゲージ -->
+    <div class="stats">
+      <div class="meter">
+        <label>おなか</label>
+        <div class="meter-bar">
+          <div id="hungerBar" style="width: 0%;"></div>
+        </div>
+      </div>
+      <div class="meter">
+        <label>きれいさ</label>
+        <div class="meter-bar">
+          <div id="cleanlinessBar" style="width: 100%;"></div>
+        </div>
+      </div>
+      <div class="meter">
+        <label>すたみな</label>
+        <div class="meter-bar">
+          <div id="staminaBar" style="width: 100%;"></div>
+        </div>
+      </div>
+      <div class="meter">
+        <label>けいけんち</label>
+        <div class="meter-bar">
+          <div id="experienceBar" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- コマンドボタン -->
+    <div class="commands">
+      <button id="feedBtn" onclick="feedPokemon()">ごはん</button>
+      <button id="cleanBtn" onclick="cleanRoom()">そうじ</button>
+      <button id="walkBtn" onclick="takeWalk()">さんぽ</button>
+    </div>
+  </div>
+
+  <!-- タイプ選択モーダル -->
+  <div id="typeSelectionModal" class="modal">
+    <div class="modal-content">
+      <p>ポケモンのタイプを選んでください:</p>
+      <button onclick="selectPokemonType('fire')">火</button>
+      <button onclick="selectPokemonType('water')">水</button>
+      <button onclick="selectPokemonType('grass')">草</button>
+    </div>
+  </div>
+
+  <!-- 戦闘用モーダル -->
+  <div id="battleModal" class="modal" style="display: none;">
+      <div class="modal-content">
+          <!-- モンスターボールアイコンとテキストを中央揃えにするためにflexを使用 -->
+          <div style="display: flex; align-items: center; justify-content: center;"> 
+              <!-- モンスターボールアイコン -->
+              <img id="monsterBallIcon" src="/images/monsterball.png" alt="モンスターボール" style="width: 30px; height: 30px; margin-right: 10px;">
+              <h3>野生の <span id="enemyName"></span> が現れた！</h3>
+          </div>
+          <img id="enemyPokemonImage" src="" alt="野生のポケモン" style="width: 200px; height: 200px;">
+        
+          <!-- 敵のHPバー -->
+          <div class="meter" style="position: relative;">
+              <label>敵のHP</label>
+              <div class="meter-bar">
+                  <div id="enemyHPBar" style="width: 100%; background-color: green;"></div>
+              </div>
+          </div>
+        
+          <div id="battleCommands" style="display: none;">
+            <button id="move1" onclick="useMove(1)">技1</button>
+            <button id="move2" onclick="useMove(2)">技2</button>
+            <button onclick="catchPokemon()">捕まえる</button>
+            <button onclick="runAway()">逃げる</button>
+          </div>
+
+      </div>
+  </div>
+
+
+
+
+  <!-- メッセージ表示用モーダル -->
+  <div id="messageModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <button onclick="closeMessageModal()">閉じる</button>
+    </div>
+  </div>
+
+  <!-- 図鑑モーダル -->
+  <div id="pokedexModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>ポケモン図鑑</h3>
+      <button onclick="closePokedex()">閉じる</button>
+
+
+
+      <div id="pokedexList">
+
+        <div>
+          <h3>はじまりのとき</h3>
+          <div class="pokemon-list">
+            <!-- ポケモンのアイテム -->
+          </div>
+        </div>
+
+        <div>
+          <h3>きぼうのみち</h3>
+          <div class="pokemon-list">
+            <!-- ポケモンのアイテム -->
+          </div>
+        </div>
+
+        <div>
+          <h3>しれんのおか</h3>
+          <div class="pokemon-list">
+            <!-- ポケモンのアイテム -->
+          </div>
+        </div>
+
+        <div>
+          <h3>でんせつ</h3>
+          <div class="pokemon-list">
+            <!-- ポケモンのアイテム -->
+          </div>
+        </div>
+
+      </div>
+
+
+
+
+      <button onclick="closePokedex()">閉じる</button>
+    </div>
+  </div>
+
+
+
+  <!-- スクリプトの読み込み -->
+  <script src="game.js"></script>
+
+
+  <div id="volumeControl" style="position: fixed; bottom: 10px; right: 10px;">
+    <label for="volumeRange">音量: </label>
+    <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.5">
+  </div>
+
+
+</body>
+</html>

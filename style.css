@@ -1,0 +1,179 @@
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ffcc00;
+  font-family: 'Arial', sans-serif;
+}
+
+.tamagotchi-frame {
+  width: 250px;
+  height: 500px;
+  background-color: rgba(240, 240, 240, 1); 
+  border-radius: 20px;
+  border: 5px solid rgba(100, 200, 200, 0.5); /* 明るいピンクの枠線に変更 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.5); /* 明るい影を追加 */
+  position: relative; /* これを追加 */
+}
+
+
+canvas {
+  background-image: url('/images/room_background.jpg');
+  background-size: cover; /* 画像をキャンバスのサイズに合わせて調整 */
+  border: 2px solid #333;
+  margin-bottom: 10px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); /* 内側の影で部屋の深みを出す */
+  position: relative; /* 吹き出しとの重なりを管理 */
+  z-index: 1; /* キャンバスは低いz-index */
+}
+
+
+
+
+
+.stats {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.meter {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+label {
+  flex: 1;
+  font-size: 14px;
+}
+
+.meter-bar {
+  flex: 2;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative; /* これを確認して親要素の位置を基準に絶対位置を取る */
+}
+
+
+.meter-bar div {
+  height: 100%;
+  background-color: #4caf50;
+  width: 0;
+  transition: width 0.5s ease;
+}
+
+.commands {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: rgba(100, 200, 200, 1);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: rgba(100, 200, 240, 1);
+}
+
+/* モーダルポップアップのスタイル */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+
+#pokedexModal .modal-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#pokedexList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center; /* 各セクションを中央に揃える */
+}
+
+#pokedexList h3 {
+  margin-bottom: 10px; /* タイトルの下に余白をつける */
+  text-align: center; /* タイトルを中央に揃える */
+}
+
+.pokemon-list {
+  display: flex;
+  justify-content: center; /* 画像を横並びで中央に揃える */
+  flex-wrap: wrap; /* ポケモンを横並びにして、画面に収まらない場合は折り返す */
+  gap: 20px; /* ポケモンの間にスペースを作る */
+}
+
+.pokemon-list img {
+  width: 100px;
+  height: auto;
+}
+
+.pokemon-list p {
+  text-align: center;
+  margin: 0;
+  width: 100px;
+}
+
+
+
+
+
+#speechBubble {
+  position: absolute;
+
+  visibility: hidden; /* まず非表示にしておく */
+  z-index: 100; /* 吹き出しが他の要素の上に表示されるようにする */
+}
+
+
+
+
+#speechBubble img {
+  width: 50px;
+  height: 50px;
+}
+
+
+
+#monsterBallIcon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px; /* テキストとの間にスペースを作る */
+}
+
+
+
